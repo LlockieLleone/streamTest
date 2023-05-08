@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stream Test</title>
+</head>
+<body>
+<h1>Stream Test</h1>
+<pre id="output" style="white-space: pre-wrap;"></pre>
+
+<script>
+  let eventSource = new EventSource("/streamtest/stream");
+
+  eventSource.onopen = function(event) {
+    console.log("SSE opened");
+  };
+
+  eventSource.onmessage = function(event) {
+    console.log("SSE message received:", event.data);
+    document.getElementById("output").textContent += event.data;
+  };
+
+  eventSource.onerror = function(event) {
+    console.log("SSE error:", event);
+  };
+
+  eventSource.onclose = function(event) {
+    console.log("SSE closed");
+  };
+</script>
+</body>
+</html>
