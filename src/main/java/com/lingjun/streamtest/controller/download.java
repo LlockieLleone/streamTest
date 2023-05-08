@@ -45,15 +45,20 @@ public class download {
         SseEmitter emitter = new SseEmitter();
 
         new Thread(() -> {
-            byte[] buffer = new byte[2];
+            byte[] buffer = new byte[4];
             int len;
             try {
                 while ((len = inputStream.read(buffer)) != -1) {
                     String data = new String(buffer, 0, len);
                     emitter.send(data);
                     Thread.sleep(10); // 等待 1 秒
+
+                    if (inputStream.available() == 0) {
+                        // 文件已读取完毕，发送一个 SSE 事件告诉客户端关闭连接
+                        emitter.send(SseEmitter.event().name("close").data("close"));
+                        break;
+                    }
                 }
-                emitter.complete();
             } catch (Exception e) {
                 emitter.completeWithError(e);
             } finally {
@@ -67,5 +72,6 @@ public class download {
 
         return emitter;
     }
+
 
 }

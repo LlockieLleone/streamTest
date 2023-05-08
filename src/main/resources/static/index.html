@@ -22,11 +22,14 @@
 
   eventSource.onerror = function(event) {
     console.log("SSE error:", event);
+    eventSource.close();
   };
 
-  eventSource.onclose = function(event) {
-    console.log("SSE closed");
-  };
+  eventSource.addEventListener("close", (event) => {
+    console.log("Closing the connection as per server request");
+    eventSource.close(); // 关闭连接
+  });
+
 </script>
 </body>
 </html>
